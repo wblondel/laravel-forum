@@ -1,0 +1,18 @@
+{
+  "preset": "laravel",
+  "rules": {
+    "blank_line_before_statement": {
+      "statements": [
+        "continue",
+        "foreach",
+        "if",
+        "return",
+        "try",
+        "while"
+      ]
+    },
+    "concat_space": {
+      "spacing": "one"
+    }
+  }
+}
