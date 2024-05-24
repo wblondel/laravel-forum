@@ -1,3 +1,6 @@
+echo "Checking code with PHPStan..."
+./vendor/bin/phpstan analyze --memory-limit=2G
+
 echo "Fixing code style with Laravel Pint..."
 ./vendor/bin/pint --dirty --quiet
 
