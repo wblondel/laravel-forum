@@ -2,6 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Models\Post;
+use App\Models\Thread;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -13,11 +15,18 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        $users = User::factory(20)->create();
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+        $threads = Thread::factory(100)
+            ->recycle($users)
+            ->has(Post::factory(20)->recycle($users))
+            ->create();
+
+        User::factory()
+            ->has(Post::factory(45)->recycle($threads))
+            ->create([
+                'name' => 'Admin',
+                'email' => 'admin@example.com',
         ]);
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\PostController;
+use App\Http\Controllers\ThreadController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -22,3 +24,5 @@ Route::middleware([
         return Inertia::render('Dashboard');
     })->name('dashboard');
 });
+
+Route::get('threads', [ThreadController::class, 'index'])->name('threads.index');
