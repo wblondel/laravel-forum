@@ -1,0 +1,23 @@
+includes:
+    - vendor/larastan/larastan/extension.neon
+    - vendor/spaze/phpstan-disallowed-calls/extension.neon
+    - vendor/spaze/phpstan-disallowed-calls/disallowed-dangerous-calls.neon
+    - vendor/spaze/phpstan-disallowed-calls/disallowed-execution-calls.neon
+    - vendor/spaze/phpstan-disallowed-calls/disallowed-insecure-calls.neon
+    - vendor/spaze/phpstan-disallowed-calls/disallowed-loose-calls.neon
+    - phpstan-baseline.neon
+
+parameters:
+
+    paths:
+        - app/
+        #- tests/
+        # There is no PHPStan extension for PEST yet. https://github.com/larastan/larastan/issues/1589
+
+    # Level 9 is the highest level
+    level: 9
+
+    disallowedFunctionCalls:
+        -
+            function: 'env()'
+            message: 'because it returns null when config is cached. It is allowed in the configuration.'
