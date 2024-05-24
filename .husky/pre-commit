@@ -1,0 +1,4 @@
+echo "Fixing code style with Laravel Pint..."
+./vendor/bin/pint --dirty --quiet
+
+echo "All done."
