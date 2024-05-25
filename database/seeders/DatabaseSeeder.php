@@ -19,7 +19,7 @@ class DatabaseSeeder extends Seeder
 
         $threads = Thread::factory(100)
             ->recycle($users)
-            ->has(Post::factory(20)->recycle($users))
+            ->has(Post::factory(2000)->recycle($users))
             ->create();
 
         User::factory()
