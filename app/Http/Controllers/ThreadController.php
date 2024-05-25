@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreThreadRequest;
 use App\Http\Requests\UpdateThreadRequest;
+use App\Http\Resources\ThreadResource;
 use App\Models\Thread;
 use Inertia\Response;
 use Inertia\ResponseFactory;
@@ -15,18 +16,19 @@ class ThreadController extends Controller
      */
     public function index(): Response|ResponseFactory
     {
+        $threads = ThreadResource::collection(Thread::query()
+            ->with([
+                'firstPost.user:id,name,profile_photo_path',
+                'latestPost.user:id,name,profile_photo_path',
+            ])
+            ->orderByLatestPost()
+            ->withCount('posts')
+            ->paginate()
+        );
+
+
         return inertia('Threads/Index', [
-            'threads' => Thread::query()
-                ->with([
-                    'author',
-                    'firstPost',
-                    'firstPost.user',
-                    'latestPost',
-                    'latestPost.user'
-                ])
-                ->withCount('posts')
-                ->latest()
-                ->get(),
+            'threads' => $threads
         ]);
     }
 

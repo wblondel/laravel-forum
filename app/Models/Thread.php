@@ -2,13 +2,13 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
+use Illuminate\Support\Facades\DB;
 
 class Thread extends Model
 {
@@ -41,7 +41,7 @@ class Thread extends Model
     /**
      * @return HasOneThrough<User>
      */
-    public function author(): HasOneThrough
+    public function user(): HasOneThrough
     {
         return $this->hasOneThrough(
             User::class,
@@ -50,7 +50,7 @@ class Thread extends Model
             'id', // Foreign key on the users table
             'id', // Local key on the threads table
             'user_id' // Local key on the posts table
-        )->oldest('posts.created_at');
+        )->oldest('created_at');
     }
 
     /**
@@ -65,6 +65,20 @@ class Thread extends Model
             'id',
             'id',
             'user_id'
-        )->latest('posts.created_at');
+        )->latest('created_at');
+    }
+
+    /**
+     * @param Builder<Thread> $query
+     * @return Builder<Thread>
+     */
+    public function scopeOrderByLatestPost(Builder $query): Builder
+    {
+        return $query
+            ->with('latestPost')
+            ->withCount(['posts as latest_post_created_at' => function (Builder $query) {
+                $query->select(DB::raw('MAX(created_at)'));
+            }])
+            ->orderByDesc('latest_post_created_at');
     }
 }

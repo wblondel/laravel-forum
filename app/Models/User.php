@@ -12,6 +12,11 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Sanctum\HasApiTokens;
 
+/**
+ * Class User
+ *
+ * @property-read string $profile_photo_url
+ */
 class User extends Authenticatable implements MustVerifyEmail
 {
     use HasApiTokens;
