@@ -2,9 +2,6 @@
 
 use App\Http\Controllers\ThreadController;
 use App\Http\Controllers\UserController;
-use App\Http\Resources\ThreadResource;
-use App\Models\Post;
-use App\Models\Thread;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;

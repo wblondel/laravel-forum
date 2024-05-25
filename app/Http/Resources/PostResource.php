@@ -23,7 +23,7 @@ class PostResource extends JsonResource
             'user' => UserResource::make($this->whenLoaded('user')),
             'thread' => ThreadResource::make($this->whenLoaded('thread')),
             'body' => $this->when(
-                !$request->routeIs( 'threads.index'),
+                ! $request->routeIs('threads.index'),
                 $this->body
             ),
             'created_at' => $this->created_at,

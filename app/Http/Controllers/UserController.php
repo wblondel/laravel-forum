@@ -22,7 +22,7 @@ class UserController extends Controller
         );
 
         return inertia('Users/Index', [
-            'users' => $users
+            'users' => $users,
         ]);
     }
 

@@ -69,7 +69,7 @@ class Thread extends Model
     }
 
     /**
-     * @param Builder<Thread> $query
+     * @param  Builder<Thread>  $query
      * @return Builder<Thread>
      */
     public function scopeOrderByLatestPost(Builder $query): Builder

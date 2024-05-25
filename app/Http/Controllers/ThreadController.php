@@ -26,9 +26,8 @@ class ThreadController extends Controller
             ->paginate()
         );
 
-
         return inertia('Threads/Index', [
-            'threads' => $threads
+            'threads' => $threads,
         ]);
     }
 
