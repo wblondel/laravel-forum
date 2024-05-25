@@ -1,4 +1,4 @@
-files=$(git diff --cached --name-only --diff-filter=ACM -- '*.php');
+files=$(git diff --cached --name-only --diff-filter=ACMR -- '*.php');
 
 echo "Checking project with PHPStan..."
 ./vendor/bin/phpstan analyze --memory-limit=2G
