@@ -1,7 +1,20 @@
-echo "Checking code with PHPStan..."
+files=$(git diff --cached --name-only --diff-filter=ACM -- '*.php');
+
+echo "Checking project with PHPStan..."
 ./vendor/bin/phpstan analyze --memory-limit=2G
+echo "Done!"
 
-echo "Fixing code style with Laravel Pint..."
-./vendor/bin/pint --dirty --quiet
+echo ""
 
+if [ -z "$files" ]
+then
+    echo "No PHP files were changed, skipping Laravel Pint."
+else
+    echo "Laravel Pint is making your code pretty... :)"
+    ./vendor/bin/pint $files -q
+    git add $files
+    echo "Done!"
+fi
+
+echo ""
 echo "All done."
