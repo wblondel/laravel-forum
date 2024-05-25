@@ -21,3 +21,7 @@ parameters:
         -
             function: 'env()'
             message: 'because it returns null when config is cached. It is allowed in the configuration.'
+
+    excludePaths:
+        analyse:
+            - app/Providers/TestingServiceProvider.php
