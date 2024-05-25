@@ -37,6 +37,11 @@ const menu = [
     name: "Threads",
     url: route('threads.index'),
     route: 'threads.index',
+  },
+  {
+    name: "Users",
+    url: route('users.index'),
+    route: 'users.index',
   }
 ]
 </script>

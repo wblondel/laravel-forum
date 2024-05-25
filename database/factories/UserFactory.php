@@ -26,6 +26,9 @@ class UserFactory extends Factory
      */
     public function definition(): array
     {
+        $createdAt = fake()->dateTimeBetween('-5 years', 'now');
+        $updatedAt = fake()->dateTimeBetween($createdAt, 'now');
+
         return [
             'name' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),
@@ -36,6 +39,8 @@ class UserFactory extends Factory
             'remember_token' => Str::random(10),
             'profile_photo_path' => null,
             'current_team_id' => null,
+            'created_at' => $createdAt,
+            'updated_at' => $updatedAt,
         ];
     }
 

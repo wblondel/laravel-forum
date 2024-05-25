@@ -3,9 +3,9 @@
 namespace App\Models;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
@@ -71,5 +71,26 @@ class User extends Authenticatable implements MustVerifyEmail
     public function posts(): HasMany
     {
         return $this->hasMany(Post::class);
+    }
+
+    /**
+     * @return HasManyThrough<Thread>
+     */
+    public function createdThreads(): HasManyThrough
+    {
+        return $this->hasManyThrough(
+            Thread::class,
+            Post::class,
+            'user_id', // Foreign key on the posts table
+            'id', // Foreign key on the threads table
+            'id', // Local key on the users table
+            'thread_id', // Local key on the posts table
+        )->where('posts.created_at', function ($query) {
+            $query->select('created_at')
+                ->from('posts')
+                ->whereColumn('posts.thread_id', 'threads.id')
+                ->orderBy('created_at', 'asc')
+                ->limit(1);
+        });
     }
 }

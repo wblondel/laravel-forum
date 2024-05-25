@@ -18,11 +18,16 @@ class PostFactory extends Factory
      */
     public function definition(): array
     {
+        $createdAt = fake()->dateTimeBetween('-5 years', 'now');
+        $updatedAt = fake()->dateTimeBetween($createdAt, 'now');
+
         return [
             'user_id' => User::factory(),
             'thread_id' => Thread::factory(),
             'parent_id' => null,
             'body' => fake()->realTextBetween(100, 600),
+            'created_at' => $createdAt,
+            'updated_at' => $updatedAt,
         ];
     }
 
