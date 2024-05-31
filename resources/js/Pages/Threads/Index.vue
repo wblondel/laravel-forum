@@ -5,9 +5,7 @@
         <li v-for="thread in threads.data" :key="thread.id">
           <Link :href="route('threads.show', thread.id)" class="block group px-2 py-4">
             <span class="font-bold text-lg group-hover:text-indigo-500">{{ thread.title }}</span>
-            <span class="block pt-1 text-sm text-gray-600">{{
-                formattedDate(thread.first_post)
-              }} by {{ thread.first_post?.user.name ?? 'Unknown' }}</span>
+            <span class="block pt-1 text-sm text-gray-600">{{ formattedDate(thread.first_post) }} by {{ thread.first_post?.user.name ?? 'Unknown' }}</span>
 
             <br>
             <div v-if="thread.first_post">First post by: {{ thread.first_post?.user.name ?? 'Deleted user' }} on
@@ -31,16 +29,10 @@ import AppLayout from "@/Layouts/AppLayout.vue";
 import Container from "@/Components/Container.vue";
 import Pagination from "@/Components/Pagination.vue";
 import {Link} from "@inertiajs/vue3";
-import {formatDistance, parseISO} from "date-fns";
+import { relativeDate } from "@/Utilities/date";
 
 defineProps(['threads'])
 
-const formattedDate = (thread) => {
-  return formatDistance(
-      parseISO(thread.created_at),
-      new Date(),
-      {addSuffix: true}
-  )
-}
+const formattedDate = (thread) => relativeDate(thread.created_at);
 </script>
 

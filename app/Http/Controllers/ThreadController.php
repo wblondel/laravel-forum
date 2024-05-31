@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreThreadRequest;
 use App\Http\Requests\UpdateThreadRequest;
+use App\Http\Resources\PostResource;
 use App\Http\Resources\ThreadResource;
 use App\Models\Thread;
 use Inertia\Response;
@@ -57,6 +58,7 @@ class ThreadController extends Controller
     {
         return inertia('Threads/Show', [
             'thread' => ThreadResource::make($thread->load('firstPost.user')),
+            'posts' => PostResource::collection($thread->posts()->with('user')->oldest()->oldest('id')->paginate()),
         ]);
     }
 
