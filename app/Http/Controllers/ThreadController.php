@@ -57,8 +57,8 @@ class ThreadController extends Controller
     public function show(Thread $thread): ResponseFactory|Response
     {
         return inertia('Threads/Show', [
-            'thread' => ThreadResource::make($thread->load('firstPost.user')),
-            'posts' => PostResource::collection($thread->posts()->with('user')->oldest()->oldest('id')->paginate()),
+            'thread' => fn () => ThreadResource::make($thread->load('firstPost.user')),
+            'posts' => fn () => PostResource::collection($thread->posts()->with('user')->oldest()->oldest('id')->paginate()),
         ]);
     }
 
