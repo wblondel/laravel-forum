@@ -26,4 +26,6 @@ Route::middleware([
 });
 
 Route::get('threads', [ThreadController::class, 'index'])->name('threads.index');
+Route::get('threads/{thread}', [ThreadController::class, 'show'])->name('threads.show');
+
 Route::get('users', [UserController::class, 'index'])->name('users.index');

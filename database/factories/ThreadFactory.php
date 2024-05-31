@@ -17,8 +17,13 @@ class ThreadFactory extends Factory
      */
     public function definition(): array
     {
+        $createdAt = fake()->dateTimeBetween('-5 years', 'now');
+        $updatedAt = fake()->dateTimeBetween($createdAt, 'now');
+
         return [
             'title' => Str::beforeLast(fake()->sentence, '.'),
+            'created_at' => $createdAt,
+            'updated_at' => $updatedAt,
         ];
     }
 }

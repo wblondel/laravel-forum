@@ -2,15 +2,12 @@
 
 use App\Http\Resources\ThreadResource;
 use App\Models\Thread;
-use Inertia\Testing\AssertableInertia;
 
 use function Pest\Laravel\get;
 
 it('should return the correct component', function () {
     get(route('threads.index'))
-        ->assertInertia(fn (AssertableInertia $inertia) => $inertia
-            ->component('Threads/Index', true)
-        );
+        ->assertComponent('Threads/Index');
 });
 
 it('passes threads to the view', function () {

@@ -17,4 +17,7 @@ else
 fi
 
 echo ""
+
+./artisan test
+
 echo "All done."

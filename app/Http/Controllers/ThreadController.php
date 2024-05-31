@@ -17,6 +17,9 @@ class ThreadController extends Controller
     public function index(): Response|ResponseFactory
     {
         $threads = ThreadResource::collection(Thread::query()
+            //->whereHas('posts', function ($query) {
+            //    $query->where('created_at', '>=', now()->subDay());
+            //})
             ->with([
                 'firstPost.user:id,name,profile_photo_path',
                 'latestPost.user:id,name,profile_photo_path',
@@ -50,9 +53,11 @@ class ThreadController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Thread $thread): void
+    public function show(Thread $thread): ResponseFactory|Response
     {
-        //
+        return inertia('Threads/Show', [
+            'thread' => new ThreadResource($thread),
+        ]);
     }
 
     /**

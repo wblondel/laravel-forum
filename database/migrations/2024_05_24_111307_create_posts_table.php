@@ -13,12 +13,14 @@ return new class extends Migration
     {
         Schema::create('posts', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->index()->constrained();
+            $table->foreignId('user_id')->constrained();
             $table->foreignId('thread_id')->index()->constrained();
-            $table->foreignId('parent_id')->nullable()->index()->constrained('posts');
+            $table->foreignId('parent_id')->nullable()->constrained('posts');
             $table->longText('body');
             $table->timestamps();
-            $table->index('created_at');
+
+            $table->index(['thread_id', 'created_at', 'user_id']);
+            $table->index('user_id');
         });
     }
 

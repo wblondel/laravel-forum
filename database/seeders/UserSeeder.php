@@ -2,10 +2,10 @@
 
 namespace Database\Seeders;
 
-use App\Models\Thread;
+use App\Models\User;
 use Illuminate\Support\Facades\Schema;
 
-class ThreadSeeder extends BaseSeeder
+class UserSeeder extends BaseSeeder
 {
     /**
      * Run the database seeds.
@@ -13,20 +13,33 @@ class ThreadSeeder extends BaseSeeder
     public function run(): void
     {
         Schema::disableForeignKeyConstraints();
-        Thread::truncate();
+        User::truncate();
         Schema::enableForeignKeyConstraints();
 
-        $nbEntries = 500_000;
+        // Create the Administrator
+        User::factory()
+            ->create([
+                'name' => 'Admin',
+                'email' => 'admin@example.com',
+            ]);
+
+        // Create users
+        $nbEntries = 100_000;
         $nbEntriesPerStep = 5_000;
         $steps = $nbEntries / $nbEntriesPerStep;
 
         $this->withProgressBar($steps, function () use ($nbEntriesPerStep) {
-            Thread::factory()
+            User::factory()
                 ->count($nbEntriesPerStep)
                 ->make()
                 ->chunk(500)
                 ->each(function ($chunk) {
-                    Thread::insert($chunk->toArray());
+                    User::insert(
+                        $chunk
+                            ->setVisible([])
+                            ->setHidden(['profile_photo_url'])
+                            ->toArray()
+                    );
                 });
         });
     }

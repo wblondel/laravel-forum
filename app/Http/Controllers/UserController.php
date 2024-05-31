@@ -18,8 +18,13 @@ class UserController extends Controller
         $users = UserResource::collection(User::query()
             ->with(['createdThreads'])
             ->latest()
-            ->get()
+            ->paginate()
         );
+
+        /* @phpstan-ignore-next-line */
+        if ($users->resource->currentPage() > $users->resource->lastPage()) {
+            abort(404);
+        }
 
         return inertia('Users/Index', [
             'users' => $users,

@@ -29,7 +29,14 @@ class TestingServiceProvider extends ServiceProvider
 
         AssertableInertia::macro('hasResource', function (string $key, JsonResource $resource) {
             $this->has($key);
-            expect($this->prop($key))->toEqual($resource->response()->getData(true)['data']);
+
+            $prop = $this->prop($key);
+
+            if (array_key_exists('data', $prop)) {
+                $prop = $prop['data'];
+            }
+
+            expect($prop)->toEqual($resource->response()->getData(true)['data']);
 
             return $this;
         });
@@ -47,6 +54,10 @@ class TestingServiceProvider extends ServiceProvider
 
         TestResponse::macro('assertHasPaginatedResource', function (string $key, ResourceCollection $resource) {
             return $this->assertInertia(fn (AssertableInertia $inertia) => $inertia->hasPaginatedResource($key, $resource));
+        });
+
+        TestResponse::macro('assertComponent', function (string $component) {
+            $this->assertInertia(fn (AssertableInertia $inertia) => $inertia->component($component, true));
         });
     }
 }

@@ -5,12 +5,14 @@
     "keywords": ["laravel", "framework"],
     "license": "MIT",
     "require": {
-        "php": "8.3.*",
+        "php": "8.*",
         "inertiajs/inertia-laravel": "^1.0",
         "laravel/framework": "^11.0",
         "laravel/jetstream": "^5.1",
+        "laravel/pail": "^1.1",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.9",
+        "leventcz/laravel-top": "^1.1",
         "tightenco/ziggy": "^2.0"
     },
     "require-dev": {
