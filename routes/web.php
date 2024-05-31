@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\PostController;
 use App\Http\Controllers\ThreadController;
 use App\Http\Controllers\UserController;
 use Illuminate\Foundation\Application;
@@ -27,5 +28,7 @@ Route::middleware([
 
 Route::get('threads', [ThreadController::class, 'index'])->name('threads.index');
 Route::get('threads/{thread}', [ThreadController::class, 'show'])->name('threads.show');
+
+Route::post('threads/{thread}/posts', [PostController::class, 'store'])->name('threads.posts.store');
 
 Route::get('users', [UserController::class, 'index'])->name('users.index');

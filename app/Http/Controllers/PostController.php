@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StorePostRequest;
 use App\Http\Requests\UpdatePostRequest;
 use App\Models\Post;
+use App\Models\Thread;
+use Illuminate\Http\RedirectResponse;
 
 class PostController extends Controller
 {
@@ -27,9 +29,16 @@ class PostController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StorePostRequest $request): void
+    public function store(StorePostRequest $request, Thread $thread): RedirectResponse
     {
-        //
+        $post = new Post($request->validated());
+
+        $post->user()->associate($request->user());
+        $post->thread()->associate($thread);
+
+        $post->save();
+
+        return to_route('threads.show', $thread);
     }
 
     /**

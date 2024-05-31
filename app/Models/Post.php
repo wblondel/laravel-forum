@@ -11,6 +11,8 @@ class Post extends Model
 {
     use HasFactory;
 
+    protected $fillable = ['body'];
+
     /**
      * @return BelongsTo<Thread, Post>
      */
