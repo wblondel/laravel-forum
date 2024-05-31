@@ -15,6 +15,8 @@ it('can show a thread', function () {
 it('passes a thread to the view', function () {
     $thread = Thread::factory()->hasPosts(10)->create();
 
+    $thread->load('firstPost.user');
+
     get(route('threads.show', $thread))
         ->assertHasResource('thread', ThreadResource::make($thread));
 });

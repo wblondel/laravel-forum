@@ -5,6 +5,7 @@ namespace Database\Factories;
 use App\Models\Thread;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Collection;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Post>
@@ -25,7 +26,7 @@ class PostFactory extends Factory
             'user_id' => User::factory(),
             'thread_id' => Thread::factory(),
             'parent_id' => null,
-            'body' => fake()->realTextBetween(100, 600),
+            'body' => Collection::times(4, fn () => fake()->realTextBetween(100, 600))->join(PHP_EOL . PHP_EOL),
             'created_at' => $createdAt,
             'updated_at' => $updatedAt,
         ];

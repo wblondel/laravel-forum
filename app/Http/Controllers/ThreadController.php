@@ -56,7 +56,7 @@ class ThreadController extends Controller
     public function show(Thread $thread): ResponseFactory|Response
     {
         return inertia('Threads/Show', [
-            'thread' => new ThreadResource($thread),
+            'thread' => ThreadResource::make($thread->load('firstPost.user')),
         ]);
     }
 

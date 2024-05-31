@@ -16,8 +16,8 @@ class ThreadSeeder extends BaseSeeder
         Thread::truncate();
         Schema::enableForeignKeyConstraints();
 
-        $nbEntries = 500_000;
-        $nbEntriesPerStep = 5_000;
+        $nbEntries = 5_000;
+        $nbEntriesPerStep = 500;
         $steps = $nbEntries / $nbEntriesPerStep;
 
         $this->withProgressBar($steps, function () use ($nbEntriesPerStep) {

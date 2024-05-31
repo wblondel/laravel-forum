@@ -24,8 +24,8 @@ class UserSeeder extends BaseSeeder
             ]);
 
         // Create users
-        $nbEntries = 100_000;
-        $nbEntriesPerStep = 5_000;
+        $nbEntries = 10_000;
+        $nbEntriesPerStep = 500;
         $steps = $nbEntries / $nbEntriesPerStep;
 
         $this->withProgressBar($steps, function () use ($nbEntriesPerStep) {
