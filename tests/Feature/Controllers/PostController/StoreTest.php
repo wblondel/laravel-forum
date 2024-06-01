@@ -21,39 +21,32 @@ it('can store a post', function () {
     ]);
 });
 
-it('cannot store a post with a null body', function () {
-    $user = User::factory()->create();
-    $thread = Thread::factory()->hasPosts(1)->create();
-
-    actingAs($user)
-        ->post(route('threads.posts.store', $thread), [
-            'body' => null,
-        ])
-        ->assertSessionHasErrors('body');
-
-});
-
-it('cannot store a post with an empty body', function () {
-    $user = User::factory()->create();
-    $thread = Thread::factory()->hasPosts(1)->create();
-
-    actingAs($user)
-        ->post(route('threads.posts.store', $thread), [
-            'body' => '',
-        ])
-        ->assertSessionHasErrors('body');
-
-});
-
-it('cannot store a post with a missing body', function () {
+it('requires a body', function () {
     $user = User::factory()->create();
     $thread = Thread::factory()->hasPosts(1)->create();
 
     actingAs($user)
         ->post(route('threads.posts.store', $thread), [])
-        ->assertSessionHasErrors('body');
-
+        ->assertInvalid('body');
 });
+
+it('requires a valid body', function (mixed $value) {
+    $user = User::factory()->create();
+    $thread = Thread::factory()->hasPosts(1)->create();
+
+    actingAs($user)
+        ->post(route('threads.posts.store', $thread), [
+            'body' => $value,
+        ])
+        ->assertInvalid('body');
+})->with([
+    '',
+    true,
+    1,
+    null,
+    [[]],
+    1.28,
+]);
 
 it('redirects to the thread show page', function () {
     $user = User::factory()->create();

@@ -31,12 +31,10 @@ class PostController extends Controller
      */
     public function store(StorePostRequest $request, Thread $thread): RedirectResponse
     {
-        $post = new Post($request->validated());
-
-        $post->user()->associate($request->user());
-        $post->thread()->associate($thread);
-
-        $post->save();
+        (new Post($request->validated()))
+            ->user()->associate($request->user())
+            ->thread()->associate($thread)
+            ->save();
 
         return to_route('threads.show', $thread);
     }
