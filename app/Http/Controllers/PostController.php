@@ -7,6 +7,7 @@ use App\Http\Requests\UpdatePostRequest;
 use App\Models\Post;
 use App\Models\Thread;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 
 class PostController extends Controller
 {
@@ -66,8 +67,15 @@ class PostController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Post $post): void
+    public function destroy(Request $request, Post $post): RedirectResponse
     {
-        //
+
+        if ($request->user()?->id !== $post->user?->id) {
+            abort(403);
+        }
+
+        $post->delete();
+
+        return to_route('threads.show', $post->thread_id);
     }
 }

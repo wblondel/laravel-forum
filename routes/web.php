@@ -26,6 +26,7 @@ Route::middleware([
     })->name('dashboard');
 
     Route::post('threads/{thread}/posts', [PostController::class, 'store'])->name('threads.posts.store');
+    Route::delete('posts/{post}', [PostController::class, 'destroy'])->name('posts.destroy');
 });
 
 Route::get('threads', [ThreadController::class, 'index'])->name('threads.index');
