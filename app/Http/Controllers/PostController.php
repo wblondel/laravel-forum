@@ -8,6 +8,7 @@ use App\Models\Post;
 use App\Models\Thread;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class PostController extends Controller
 {
@@ -69,10 +70,7 @@ class PostController extends Controller
      */
     public function destroy(Request $request, Post $post): RedirectResponse
     {
-
-        if ($request->user()?->id !== $post->user?->id) {
-            abort(403);
-        }
+        Gate::authorize('delete', $post);
 
         $post->delete();
 

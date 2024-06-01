@@ -4,6 +4,7 @@ namespace App\Policies;
 
 use App\Models\Post;
 use App\Models\User;
+use Illuminate\Support\Carbon;
 
 class PostPolicy
 {
@@ -44,7 +45,12 @@ class PostPolicy
      */
     public function delete(User $user, Post $post): bool
     {
-        return false;
+        /** @var Carbon $postCreatedAt */
+        $postCreatedAt = $post->created_at;
+
+        return
+            $user->id === $post->user_id &&
+            $postCreatedAt->isAfter(now()->subHour());
     }
 
     /**

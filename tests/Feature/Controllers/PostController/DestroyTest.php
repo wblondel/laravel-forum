@@ -14,26 +14,32 @@ it('requires authentication', function () {
         ->assertRedirectToRoute('login');
 });
 
-it('can delete a post', function () {
+it('can delete a recent post', function () {
     $thread = Thread::factory()->create();
-    $posts = Post::factory(2)->for($thread)->create();
 
-    $secondPost = $posts->sortByDesc('created_at')->first();
+    Post::factory()->for($thread)->create();
 
-    actingAs($secondPost->user)
-        ->delete(route('posts.destroy', $secondPost));
+    $recentPost = Post::factory()->for($thread)->create([
+        'created_at' => now(),
+    ]);
 
-    $this->assertModelMissing($secondPost);
+    actingAs($recentPost->user)
+        ->delete(route('posts.destroy', $recentPost));
+
+    $this->assertModelMissing($recentPost);
 });
 
 it('redirects to the thread show page', function () {
     $thread = Thread::factory()->create();
-    $posts = Post::factory(2)->for($thread)->create();
 
-    $lastPost = $posts->sortByDesc('created_at')->first();
+    Post::factory()->for($thread)->create();
 
-    actingAs($lastPost->user)
-        ->delete(route('posts.destroy', $lastPost))
+    $recentPost = Post::factory()->for($thread)->create([
+        'created_at' => now(),
+    ]);
+
+    actingAs($recentPost->user)
+        ->delete(route('posts.destroy', $recentPost))
         ->assertRedirectToRoute('threads.show', $thread->id);
 });
 
@@ -48,4 +54,20 @@ it('prevents deleting a post you did not create', function () {
 
     // Double check
     $this->assertModelExists($lastPost);
+});
+
+it('prevents deleting a post posted over an hour ago', function () {
+    $thread = Thread::factory()->hasPosts(2)->create();
+
+    $this->freezeTime();
+
+    $postToDelete = Post::factory()->for($thread)->create([
+        'created_at' => now(),
+    ]);
+
+    $this->travel(1)->hour();
+
+    actingAs($postToDelete->user)
+        ->delete(route('posts.destroy', $postToDelete))
+        ->assertForbidden();
 });
