@@ -74,6 +74,11 @@ class PostController extends Controller
 
         $post->delete();
 
-        return to_route('threads.show', $post->thread_id);
+        return to_route(
+            'threads.show', [
+                'thread' => $post->thread_id,
+                'page' => $request->query('page'),
+            ]
+        );
     }
 }

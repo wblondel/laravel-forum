@@ -23,7 +23,7 @@
 
         <ul class="divide-y mt-4">
           <li v-for="post in posts.data" :key="post.id" class="px-2 py-4">
-            <Post :post="post"></Post>
+            <Post @delete="deletePost" :post="post"></Post>
           </li>
         </ul>
 
@@ -44,7 +44,7 @@ import Post from "@/Components/Post.vue";
 import InputLabel from "@/Components/InputLabel.vue";
 import TextInput from "@/Components/TextInput.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
-import {useForm} from "@inertiajs/vue3";
+import {router, useForm} from "@inertiajs/vue3";
 import TextArea from "@/Components/TextArea.vue";
 import InputError from "@/Components/InputError.vue";
 
@@ -59,6 +59,10 @@ const postForm = useForm({
 const addPost = () => postForm.post(route('threads.posts.store', props.thread.data.id), {
   preserveScroll: true,
   onSuccess: () => postForm.reset(),
+});
+
+const deletePost = (postId) => router.delete(route('posts.destroy', { post: postId, page: props.posts.meta.current_page }), {
+  preserveScroll: true
 });
 </script>
 

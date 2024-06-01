@@ -43,6 +43,20 @@ it('redirects to the thread show page', function () {
         ->assertRedirectToRoute('threads.show', $thread->id);
 });
 
+it('redirects to the thread show page with the page query parameter', function () {
+    $thread = Thread::factory()->create();
+
+    Post::factory()->for($thread)->create();
+
+    $recentPost = Post::factory()->for($thread)->create([
+        'created_at' => now(),
+    ]);
+
+    actingAs($recentPost->user)
+        ->delete(route('posts.destroy', ['post' => $recentPost, 'page' => 2]))
+        ->assertRedirectToRoute('threads.show', ['thread' => $thread->id, 'page' => 2]);
+});
+
 it('prevents deleting a post you did not create', function () {
     $thread = Thread::factory()->create();
     $posts = Post::factory(2)->for($thread)->create();
