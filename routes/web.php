@@ -24,11 +24,11 @@ Route::middleware([
     Route::get('/dashboard', function () {
         return Inertia::render('Dashboard');
     })->name('dashboard');
+
+    Route::post('threads/{thread}/posts', [PostController::class, 'store'])->name('threads.posts.store');
 });
 
 Route::get('threads', [ThreadController::class, 'index'])->name('threads.index');
 Route::get('threads/{thread}', [ThreadController::class, 'show'])->name('threads.show');
-
-Route::post('threads/{thread}/posts', [PostController::class, 'store'])->name('threads.posts.store');
 
 Route::get('users', [UserController::class, 'index'])->name('users.index');

@@ -5,6 +5,14 @@ use App\Models\Thread;
 use App\Models\User;
 
 use function Pest\Laravel\actingAs;
+use function Pest\Laravel\post;
+
+it('requires authentication', function () {
+    $thread = Thread::factory()->hasPosts(1)->create();
+
+    post(route('threads.posts.store', $thread))
+        ->assertRedirectToRoute('login');
+});
 
 it('can store a post', function () {
     $user = User::factory()->create();
