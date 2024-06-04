@@ -14,6 +14,8 @@ class Thread extends Model
 {
     use HasFactory;
 
+    protected $guarded = ['id'];
+
     /**
      * @return HasMany<Post>
      */

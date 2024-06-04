@@ -25,10 +25,10 @@ Route::middleware([
         return Inertia::render('Dashboard');
     })->name('dashboard');
 
+    Route::resource('threads', ThreadController::class)->only(['store']);
     Route::resource('threads.posts', PostController::class)->shallow()->only(['store', 'update', 'destroy']);
 });
 
-Route::get('threads', [ThreadController::class, 'index'])->name('threads.index');
-Route::get('threads/{thread}', [ThreadController::class, 'show'])->name('threads.show');
+Route::resource('threads', ThreadController::class)->only(['index', 'show']);
 
 Route::get('users', [UserController::class, 'index'])->name('users.index');

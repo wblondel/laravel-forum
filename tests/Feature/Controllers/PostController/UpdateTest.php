@@ -6,10 +6,15 @@ use App\Models\User;
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\put;
 
-it('requires authentication', function () {
-    $post = Post::factory()->create();
+beforeEach(function () {
+    $this->validData = [
+        'body' => 'Hello everyone! This is an awesome post, and I am very happy to be part of this community! ' .
+            'I hope I will have a lot of fun.',
+    ];
+});
 
-    put(route('posts.update', $post))
+it('requires authentication', function () {
+    put(route('posts.update', Post::factory()->create()))
         ->assertRedirectToRoute('login');
 });
 
@@ -18,14 +23,12 @@ it('can update a post', function () {
         'body' => 'This body should be updated.',
     ]);
 
-    $newBody = 'This is the new body.';
-
     actingAs($post->user)
-        ->put(route('posts.update', $post), ['body' => $newBody]);
+        ->put(route('posts.update', $post), $this->validData);
 
     $this->assertDatabaseHas(Post::class, [
         'id' => $post->id,
-        'body' => $newBody,
+        'body' => $this->validData['body'],
     ]);
 });
 
@@ -33,7 +36,7 @@ it('redirects to the thread show page', function () {
     $post = Post::factory()->create();
 
     actingAs($post->user)
-        ->put(route('posts.update', $post), ['body' => 'This is the new body.'])
+        ->put(route('posts.update', $post), $this->validData)
         ->assertRedirectToRoute('threads.show', $post->thread);
 });
 
@@ -41,7 +44,7 @@ it('redirects to the correct page of posts', function () {
     $post = Post::factory()->create();
 
     actingAs($post->user)
-        ->put(route('posts.update', ['post' => $post, 'page' => 2]), ['body' => 'This is the new body.'])
+        ->put(route('posts.update', ['post' => $post, 'page' => 2]), $this->validData)
         ->assertRedirectToRoute('threads.show', ['thread' => $post->thread, 'page' => 2]);
 });
 
@@ -49,31 +52,35 @@ it('cannot update a post from another user', function () {
     $post = Post::factory()->create();
 
     actingAs(User::factory()->create())
-        ->put(route('posts.update', $post), ['body' => 'This is the new body.'])
+        ->put(route('posts.update', $post), $this->validData)
         ->assertForbidden();
 });
 
-it('requires a body', function () {
+it('requires data', function (string $attributeToRemove) {
+    unset($this->validData[$attributeToRemove]);
+
     $post = Post::factory()->create();
 
     actingAs($post->user)
-        ->put(route('posts.update', $post), [])
-        ->assertInvalid('body');
-});
-
-it('requires a valid body', function (mixed $value) {
-    $post = Post::factory()->create();
-
-    actingAs($post->user)
-        ->put(route('posts.update', $post), [
-            'body' => $value,
-        ])
-        ->assertInvalid('body');
+        ->put(route('posts.update', $post), $this->validData)
+        ->assertInvalid($attributeToRemove);
 })->with([
-    '',
-    true,
-    1,
-    null,
-    [[]],
-    1.28,
+    'removing body' => 'body',
+]);
+
+it('requires valid data', function (array $badData, array|string $errors) {
+    $post = Post::factory()->create();
+
+    actingAs($post->user)
+        ->put(route('posts.update', $post), [...$this->validData, ...$badData])
+        ->assertInvalid($errors);
+})->with([
+    [['body' => ''], 'body'],
+    [['body' => true], 'body'],
+    [['body' => 1], 'body'],
+    [['body' => null], 'body'],
+    [['body' => []], 'body'],
+    [['body' => 1.28], 'body'],
+    [['body' => str_repeat('a', 99)], 'body'],
+    [['body' => str_repeat('a', 10_001)], 'body'],
 ]);

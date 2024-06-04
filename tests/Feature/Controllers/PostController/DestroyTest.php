@@ -8,9 +8,7 @@ use function Pest\Laravel\actingAs;
 use function Pest\Laravel\delete;
 
 it('requires authentication', function () {
-    $post = Post::factory()->create();
-
-    delete(route('posts.destroy', $post))
+    delete(route('posts.destroy', Post::factory()->create()))
         ->assertRedirectToRoute('login');
 });
 

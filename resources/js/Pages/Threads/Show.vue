@@ -14,7 +14,7 @@
         <form v-if="$page.props.auth.user" @submit.prevent="() => postIdBeingEdited ? updatePost() : addPost()" class="mt-4">
           <div>
             <InputLabel for="body" class="sr-only">Post</InputLabel>
-            <TextArea ref="postTextAreaRef" id="body" v-model="postForm.body" rows="4" placeholder="What's on your mind?" />
+            <TextArea ref="postTextAreaRef" id="body" v-model="postForm.body" rows="4" placeholder="What's on your mind?" minlength="100" maxlength="10000"/>
             <InputError :message="postForm.errors.body" class="mt-1"></InputError>
           </div>
 

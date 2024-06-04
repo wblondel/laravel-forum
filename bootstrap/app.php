@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Console\Scheduling\Schedule;
+use Illuminate\Database\Console\MonitorCommand;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -30,4 +32,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
             return $response;
         });
+    })
+    ->withSchedule(function (Schedule $schedule) {
+        $schedule->command(MonitorCommand::class, ['--databases' => 'pgsql', '--max' => 100])->everyMinute();
     })->create();

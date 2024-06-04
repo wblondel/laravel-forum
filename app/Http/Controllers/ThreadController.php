@@ -6,7 +6,9 @@ use App\Http\Requests\StoreThreadRequest;
 use App\Http\Requests\UpdateThreadRequest;
 use App\Http\Resources\PostResource;
 use App\Http\Resources\ThreadResource;
+use App\Models\Post;
 use App\Models\Thread;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Response;
 use Inertia\ResponseFactory;
@@ -49,9 +51,23 @@ class ThreadController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreThreadRequest $request): void
+    public function store(StoreThreadRequest $request): \Illuminate\Http\RedirectResponse
     {
-        //
+        $threadData = $request->safe()->only(['title']);
+        $postData = $request->safe()->only(['body']);
+
+        $thread = DB::transaction(function () use ($threadData, $postData, $request) {
+            $thread = Thread::create($threadData);
+
+            (new Post($postData))
+                ->user()->associate($request->user())
+                ->thread()->associate($thread)
+                ->save();
+
+            return $thread;
+        });
+
+        return to_route('threads.show', $thread);
     }
 
     /**
