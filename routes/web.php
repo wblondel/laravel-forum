@@ -25,8 +25,7 @@ Route::middleware([
         return Inertia::render('Dashboard');
     })->name('dashboard');
 
-    Route::post('threads/{thread}/posts', [PostController::class, 'store'])->name('threads.posts.store');
-    Route::delete('posts/{post}', [PostController::class, 'destroy'])->name('posts.destroy');
+    Route::resource('threads.posts', PostController::class)->shallow()->only(['store', 'update', 'destroy']);
 });
 
 Route::get('threads', [ThreadController::class, 'index'])->name('threads.index');

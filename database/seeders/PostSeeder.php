@@ -33,7 +33,7 @@ class PostSeeder extends BaseSeeder
             Log::info('Thread ' . $threadId);
             // For this thread, we create a specific number of posts
             $nbPostsPerThreadMin = 10;
-            $nbPostsPerThreadMax = 100;
+            $nbPostsPerThreadMax = 50;
             $nbPostsCurrentThread = rand($nbPostsPerThreadMin, $nbPostsPerThreadMax);
 
             // Chunk size to be inserted in the database

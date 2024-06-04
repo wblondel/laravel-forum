@@ -13,26 +13,12 @@ use Illuminate\Support\Facades\Gate;
 class PostController extends Controller
 {
     /**
-     * Display a listing of the resource.
-     */
-    public function index(): void
-    {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create(): void
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      */
     public function store(StorePostRequest $request, Thread $thread): RedirectResponse
     {
+        Gate::authorize('create', Post::class);
+
         (new Post($request->validated()))
             ->user()->associate($request->user())
             ->thread()->associate($thread)
@@ -42,27 +28,22 @@ class PostController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     */
-    public function show(Post $post): void
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Post $post): void
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      */
-    public function update(UpdatePostRequest $request, Post $post): void
+    public function update(UpdatePostRequest $request, Post $post): RedirectResponse
     {
-        //
+        Gate::authorize('update', $post);
+
+        $validated = $request->validated();
+
+        $post->update($validated);
+
+        return to_route(
+            'threads.show', [
+                'thread' => $post->thread_id,
+                'page' => $request->query('page'),
+            ]
+        );
     }
 
     /**

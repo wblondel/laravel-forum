@@ -64,5 +64,5 @@ it('redirects to the thread show page', function () {
         ->post(route('threads.posts.store', $thread), [
             'body' => 'This is a post.',
         ])
-        ->assertRedirect(route('threads.show', $thread));
+        ->assertRedirectToRoute('threads.show', $thread);
 });

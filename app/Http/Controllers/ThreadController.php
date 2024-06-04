@@ -7,6 +7,7 @@ use App\Http\Requests\UpdateThreadRequest;
 use App\Http\Resources\PostResource;
 use App\Http\Resources\ThreadResource;
 use App\Models\Thread;
+use Illuminate\Support\Facades\Gate;
 use Inertia\Response;
 use Inertia\ResponseFactory;
 
@@ -17,6 +18,8 @@ class ThreadController extends Controller
      */
     public function index(): Response|ResponseFactory
     {
+        Gate::authorize('viewAny', Thread::class);
+
         $threads = ThreadResource::collection(Thread::query()
             //->whereHas('posts', function ($query) {
             //    $query->where('created_at', '>=', now()->subDay());
@@ -56,6 +59,8 @@ class ThreadController extends Controller
      */
     public function show(Thread $thread): ResponseFactory|Response
     {
+        Gate::authorize('view', $thread);
+
         return inertia('Threads/Show', [
             'thread' => fn () => ThreadResource::make($thread->load('firstPost.user')),
             'posts' => fn () => PostResource::collection($thread->posts()->with('user')->oldest()->oldest('id')->paginate()),

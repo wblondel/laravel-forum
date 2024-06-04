@@ -24,7 +24,7 @@
   </AppLayout>
 </template>
 
-<script setup lang="ts">
+<script setup>
 import AppLayout from "@/Layouts/AppLayout.vue";
 import Container from "@/Components/Container.vue";
 import Pagination from "@/Components/Pagination.vue";

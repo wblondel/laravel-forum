@@ -35,7 +35,7 @@
   </AppLayout>
 </template>
 
-<script setup lang="ts">
+<script setup>
 import AppLayout from "@/Layouts/AppLayout.vue";
 import Container from "@/Components/Container.vue";
 import Pagination from "@/Components/Pagination.vue";
@@ -46,7 +46,7 @@ import {computed} from "vue";
 defineProps(['users'])
 
 const threadsCount = computed(() => {
-  return usePage().props.users.data.reduce((total: Number, user): Number => {
+  return usePage().props.users.data.reduce((total, user) => {
     return total + (user.created_threads ? user.created_threads.length : 0);
   }, 0);
 });
