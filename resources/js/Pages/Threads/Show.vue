@@ -28,7 +28,7 @@
           </li>
         </ul>
 
-        <Pagination :meta="posts.meta" :only="['posts']"/>
+        <Pagination :meta="posts.meta" :only="['posts','jetstream']"/>
       </div>
     </Container>
 

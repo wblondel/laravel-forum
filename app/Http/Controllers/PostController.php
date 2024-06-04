@@ -24,7 +24,8 @@ class PostController extends Controller
             ->thread()->associate($thread)
             ->save();
 
-        return to_route('threads.show', $thread);
+        return to_route('threads.show', $thread)
+            ->banner('Post successfully published.');
     }
 
     /**
@@ -43,7 +44,8 @@ class PostController extends Controller
                 'thread' => $post->thread_id,
                 'page' => $request->query('page'),
             ]
-        );
+        )
+            ->banner('Post successfully updated.');
     }
 
     /**
@@ -60,6 +62,7 @@ class PostController extends Controller
                 'thread' => $post->thread_id,
                 'page' => $request->query('page'),
             ]
-        );
+        )
+            ->banner('Post successfully deleted.');
     }
 }
