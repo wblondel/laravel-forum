@@ -48,6 +48,7 @@ import {router, useForm} from "@inertiajs/vue3";
 import TextArea from "@/Components/TextArea.vue";
 import InputError from "@/Components/InputError.vue";
 import SecondaryButton from "@/Components/SecondaryButton.vue";
+import {useConfirm} from "@/Utilities/Composables/useConfirm.js";
 
 const props = defineProps(['thread', 'posts']);
 
@@ -79,19 +80,34 @@ const addPost = () => postForm.post(route('threads.posts.store', {
   onSuccess: () => postForm.reset(),
 });
 
-const updatePost = () => postForm.put(route('posts.update', {
-  post: postIdBeingEdited.value,
-  page: props.posts.meta.current_page
-}), {
-  preserveScroll: true,
-  onSuccess: cancelEditPost
-});
+const { confirmation } = useConfirm();
 
-const deletePost = (postId) => router.delete(route('posts.destroy', {
-  post: postId,
-  page: props.posts.meta.current_page
-}), {
-  preserveScroll: true
-});
+const updatePost = async () => {
+  if (! await confirmation('Are you sure you want to update this post?')) {
+    setTimeout(() => postTextAreaRef.value?.focus(), 201);
+    return;
+  }
+
+  postForm.put(route('posts.update', {
+    post: postIdBeingEdited.value,
+    page: props.posts.meta.current_page
+  }), {
+    preserveScroll: true,
+    onSuccess: cancelEditPost
+  });
+};
+
+const deletePost = async (postId) => {
+  if (! await confirmation('Are you sure you want to delete this post?')) {
+    return;
+  }
+
+  router.delete(route('posts.destroy', {
+    post: postId,
+    page: props.posts.meta.current_page
+  }), {
+    preserveScroll: true
+  });
+}
 </script>
 
