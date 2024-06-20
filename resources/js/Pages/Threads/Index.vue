@@ -3,7 +3,7 @@
     <Container>
       <ul class="divide-y">
         <li v-for="thread in threads.data" :key="thread.id">
-          <Link :href="route('threads.show', thread.id)" class="block group px-2 py-4">
+          <Link :href="thread.routes.show" class="block group px-2 py-4">
             <span class="font-bold text-lg group-hover:text-indigo-500">{{ thread.title }}</span>
             <span class="block pt-1 text-sm text-gray-600">{{ thread.first_post ? formattedDate(thread.first_post) : '' }} by {{ thread.first_post?.user.name ?? 'Unknown' }}</span>
 

@@ -10,7 +10,7 @@ use function Pest\Laravel\get;
 it('can show a thread', function () {
     $thread = Thread::factory()->hasPosts(10)->create();
 
-    get(route('threads.show', $thread))
+    get($thread->showRoute())
         ->assertComponent('Threads/Show');
 });
 
@@ -19,7 +19,7 @@ it('passes a thread to the view', function () {
 
     $thread->load('firstPost.user');
 
-    get(route('threads.show', $thread))
+    get($thread->showRoute())
         ->assertHasResource('thread', ThreadResource::make($thread));
 });
 
@@ -29,7 +29,7 @@ it('passes posts to the view', function () {
 
     $posts->load('user');
 
-    get(route('threads.show', $thread))
+    get($thread->showRoute())
         ->assertHasPaginatedResource(
             'posts',
             PostResource::collection(

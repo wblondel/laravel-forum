@@ -24,7 +24,7 @@ class PostController extends Controller
             ->thread()->associate($thread)
             ->save();
 
-        return to_route('threads.show', $thread)
+        return redirect($thread->showRoute())
             ->banner('Post successfully published.');
     }
 
@@ -39,12 +39,13 @@ class PostController extends Controller
 
         $post->update($validated);
 
-        return to_route(
-            'threads.show', [
-                'thread' => $post->thread_id,
-                'page' => $request->query('page'),
-            ]
-        )
+        $thread = $post->thread;
+
+        if (is_null($thread)) {
+            abort(404);
+        }
+
+        return redirect($thread->showRoute(['page' => $request->query('page')]))
             ->banner('Post successfully updated.');
     }
 
@@ -57,12 +58,13 @@ class PostController extends Controller
 
         $post->delete();
 
-        return to_route(
-            'threads.show', [
-                'thread' => $post->thread_id,
-                'page' => $request->query('page'),
-            ]
-        )
+        $thread = $post->thread;
+
+        if (is_null($thread)) {
+            abort(404);
+        }
+
+        return redirect($thread->showRoute(['page' => $request->query('page')]))
             ->banner('Post successfully deleted.');
     }
 }

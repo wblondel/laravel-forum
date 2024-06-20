@@ -41,7 +41,7 @@ it('redirects to the thread show page', function () {
 
     actingAs($user)
         ->post(route('threads.posts.store', $thread), $this->validData)
-        ->assertRedirectToRoute('threads.show', $thread);
+        ->assertRedirect($thread->showRoute());
 });
 
 it('requires data', function (string $attributeToRemove) {

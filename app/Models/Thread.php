@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class Thread extends Model
 {
@@ -82,5 +83,13 @@ class Thread extends Model
                 $query->select(DB::raw('MAX(created_at)'));
             }])
             ->orderByDesc('latest_post_created_at');
+    }
+
+    /**
+     * @param  array<string, mixed>  $parameters
+     */
+    public function showRoute(array $parameters = []): string
+    {
+        return route('threads.show', [$this, Str::slug($this->title), ...$parameters]);
     }
 }

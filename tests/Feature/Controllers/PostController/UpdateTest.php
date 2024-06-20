@@ -37,7 +37,7 @@ it('redirects to the thread show page', function () {
 
     actingAs($post->user)
         ->put(route('posts.update', $post), $this->validData)
-        ->assertRedirectToRoute('threads.show', $post->thread);
+        ->assertRedirect($post->thread->showRoute());
 });
 
 it('redirects to the correct page of posts', function () {
@@ -45,7 +45,7 @@ it('redirects to the correct page of posts', function () {
 
     actingAs($post->user)
         ->put(route('posts.update', ['post' => $post, 'page' => 2]), $this->validData)
-        ->assertRedirectToRoute('threads.show', ['thread' => $post->thread, 'page' => 2]);
+        ->assertRedirect($post->thread->showRoute(['page' => 2]));
 });
 
 it('cannot update a post from another user', function () {

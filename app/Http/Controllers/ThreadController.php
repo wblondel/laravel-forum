@@ -8,8 +8,11 @@ use App\Http\Resources\PostResource;
 use App\Http\Resources\ThreadResource;
 use App\Models\Post;
 use App\Models\Thread;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Str;
 use Inertia\Response;
 use Inertia\ResponseFactory;
 
@@ -71,15 +74,19 @@ class ThreadController extends Controller
             return $thread;
         });
 
-        return to_route('threads.show', $thread);
+        return redirect($thread->showRoute());
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Thread $thread): ResponseFactory|Response
+    public function show(Request $request, Thread $thread): ResponseFactory|Response|RedirectResponse
     {
         Gate::authorize('view', $thread);
+
+        if (! Str::contains($thread->showRoute(), $request->path())) {
+            return redirect($thread->showRoute((array) $request->query()), 301);
+        }
 
         return inertia('Threads/Show', [
             'thread' => fn () => ThreadResource::make($thread->load('firstPost.user')),

@@ -29,6 +29,7 @@ Route::middleware([
     Route::resource('threads.posts', PostController::class)->shallow()->only(['store', 'update', 'destroy']);
 });
 
-Route::resource('threads', ThreadController::class)->only(['index', 'show']);
+Route::get('threads/{thread}/{slug?}', [ThreadController::class, 'show'])->name('threads.show');
+Route::resource('threads', ThreadController::class)->only(['index']);
 
 Route::get('users', [UserController::class, 'index'])->name('users.index');

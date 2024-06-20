@@ -38,7 +38,7 @@ it('redirects to the thread show page', function () {
 
     actingAs($recentPost->user)
         ->delete(route('posts.destroy', $recentPost))
-        ->assertRedirectToRoute('threads.show', $thread->id);
+        ->assertRedirect($thread->showRoute());
 });
 
 it('redirects to the thread show page with the page query parameter', function () {
@@ -52,7 +52,7 @@ it('redirects to the thread show page with the page query parameter', function (
 
     actingAs($recentPost->user)
         ->delete(route('posts.destroy', ['post' => $recentPost, 'page' => 2]))
-        ->assertRedirectToRoute('threads.show', ['thread' => $thread->id, 'page' => 2]);
+        ->assertRedirect($thread->showRoute(['page' => 2]));
 });
 
 it('prevents deleting a post you did not create', function () {
