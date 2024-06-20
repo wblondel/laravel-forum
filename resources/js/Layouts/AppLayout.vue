@@ -43,6 +43,12 @@ const menu = [
     name: "Users",
     url: route('users.index'),
     route: 'users.index',
+  },
+  {
+    name: "Create a Thread",
+    url: route('threads.create'),
+    route: 'threads.create',
+    when: () => usePage().props.permissions.create_threads,
   }
 ]
 </script>

@@ -45,6 +45,8 @@ class ThreadController extends Controller
      */
     public function create(): ResponseFactory|Response
     {
+        Gate::authorize('create', Thread::class);
+
         return inertia('Threads/Create');
     }
 
@@ -53,6 +55,8 @@ class ThreadController extends Controller
      */
     public function store(StoreThreadRequest $request): \Illuminate\Http\RedirectResponse
     {
+        Gate::authorize('create', Thread::class);
+
         $threadData = $request->safe()->only(['title']);
         $postData = $request->safe()->only(['body']);
 
