@@ -43,9 +43,9 @@ class ThreadController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create(): void
+    public function create(): ResponseFactory|Response
     {
-        //
+        return inertia('Threads/Create');
     }
 
     /**

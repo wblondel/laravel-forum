@@ -25,7 +25,7 @@ Route::middleware([
         return Inertia::render('Dashboard');
     })->name('dashboard');
 
-    Route::resource('threads', ThreadController::class)->only(['store']);
+    Route::resource('threads', ThreadController::class)->only(['create', 'store']);
     Route::resource('threads.posts', PostController::class)->shallow()->only(['store', 'update', 'destroy']);
 });
 
