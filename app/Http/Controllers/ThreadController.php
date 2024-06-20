@@ -84,7 +84,7 @@ class ThreadController extends Controller
     {
         Gate::authorize('view', $thread);
 
-        if (! Str::contains($thread->showRoute(), $request->path())) {
+        if (! Str::endsWith($thread->showRoute(), $request->path())) {
             return redirect($thread->showRoute((array) $request->query()), 301);
         }
 
