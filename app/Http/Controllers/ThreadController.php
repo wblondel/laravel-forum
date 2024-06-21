@@ -16,6 +16,10 @@ use Illuminate\Support\Str;
 use Inertia\Response;
 use Inertia\ResponseFactory;
 
+/*
+ * TODO: I know that the first post appears twice. I will modify the relations between Thread and Post later.
+ *  My goal is to make a clone of phpBB, because nostalgia :-), but for now I'm following a Laracasts course.
+ */
 class ThreadController extends Controller
 {
     /**
@@ -90,7 +94,14 @@ class ThreadController extends Controller
 
         return inertia('Threads/Show', [
             'thread' => fn () => ThreadResource::make($thread->load('firstPost.user')),
-            'posts' => fn () => PostResource::collection($thread->posts()->with('user')->oldest()->oldest('id')->paginate()),
+            'posts' => fn () => PostResource::collection(
+                $thread
+                    ->posts()
+                    ->with('user')
+                    ->oldest()
+                    ->oldest('id')
+                    ->paginate()
+            ),
         ]);
     }
 
