@@ -23,7 +23,7 @@ class UserResource extends JsonResource
             'name' => $this->name,
             //'email' => $this->when($this->id === $request->user()?->id, $this->email),
             'profile_photo_url' => $this->profile_photo_url,
-            'created_threads' => ThreadResource::collection($this->whenLoaded('createdThreads')),
+            'threads' => ThreadResource::collection($this->whenLoaded('threads')),
             'created_at' => $this->when($request->routeIs('users.index'), function () {
                 return $this->created_at;
             }),

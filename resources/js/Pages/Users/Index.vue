@@ -17,8 +17,8 @@
             <td>{{ user.id }}</td>
             <td>{{ user.name }}</td>
             <td>{{ user.created_at }}</td>
-            <td class="text-right"><span v-for="thread in user.created_threads">{{ thread.id }}, </span></td>
-            <td class="text-right">{{ user.created_threads?.length ?? 0 }}</td>
+            <td class="text-right"><span v-for="thread in user.threads">{{ thread.id }}, </span></td>
+            <td class="text-right">{{ user.threads?.length ?? 0 }}</td>
           </tr>
         </tbody>
 
@@ -47,7 +47,7 @@ defineProps(['users'])
 
 const threadsCount = computed(() => {
   return usePage().props.users.data.reduce((total, user) => {
-    return total + (user.created_threads ? user.created_threads.length : 0);
+    return total + (user.threads ? user.threads.length : 0);
   }, 0);
 });
 

@@ -11,17 +11,22 @@ it('should return the correct component', function () {
 });
 
 it('passes threads to the view', function () {
-    $threads = Thread::factory(5)->hasPosts(10)->create();
+    for ($i = 0; $i < 50; $i++) {
+        createThreadWithPostAndAdditionalRecentPost();
+    }
+
+    $threads = Thread::all();
 
     $paginatedResource = ThreadResource::collection($threads
         ->load([
-            'firstPost.user:id,name,profile_photo_path',
+            'user:id,name,profile_photo_path',
             'latestPost.user:id,name,profile_photo_path',
         ])
         ->sortByDesc(function ($thread) {
             return $thread->latestPost->created_at;
         })
         ->loadCount('posts')
+        ->take(config('pagination.threads_per_page'))
     );
 
     get(route('threads.index'))

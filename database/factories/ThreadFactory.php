@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
@@ -22,6 +23,7 @@ class ThreadFactory extends Factory
 
         return [
             'title' => Str::beforeLast(fake()->sentence, '.'),
+            'user_id' => User::factory(),
             'created_at' => $createdAt,
             'updated_at' => $updatedAt,
         ];

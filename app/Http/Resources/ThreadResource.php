@@ -27,7 +27,7 @@ class ThreadResource extends JsonResource
                 return $this->posts_count;
             }),
             'title' => $this->title,
-            //'created_at' => $this->created_at,
+            'created_at' => $this->created_at,
             //'updated_at' => $this->updated_at,
             'routes' => [
                 'show' => $this->showRoute(),

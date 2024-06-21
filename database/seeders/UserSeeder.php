@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-use Illuminate\Support\Facades\Schema;
 
 class UserSeeder extends BaseSeeder
 {
@@ -12,10 +11,6 @@ class UserSeeder extends BaseSeeder
      */
     public function run(): void
     {
-        Schema::disableForeignKeyConstraints();
-        User::truncate();
-        Schema::enableForeignKeyConstraints();
-
         // Create the Administrator
         User::factory()
             ->create([

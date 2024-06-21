@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\Post;
+use App\Models\User;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
 use Tests\TestCase;
 
@@ -42,7 +44,18 @@ expect()->extend('toBeOne', function () {
 |
 */
 
-function something()
+function createThreadWithPostAndAdditionalRecentPost(): array
 {
-    // ..
+    $post = Post::factory()->withThread()->create();
+
+    $recentPost = Post::factory()
+        ->for($post->thread)
+        ->for(User::factory())
+        ->recentlyPosted()
+        ->create();
+
+    return [
+        'first_post' => $post,
+        'recent_post' => $recentPost,
+    ];
 }

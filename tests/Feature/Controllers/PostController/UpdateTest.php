@@ -14,12 +14,14 @@ beforeEach(function () {
 });
 
 it('requires authentication', function () {
-    put(route('posts.update', Post::factory()->create()))
+    $post = Post::factory()->withThread()->create();
+
+    put(route('posts.update', $post))
         ->assertRedirectToRoute('login');
 });
 
 it('can update a post', function () {
-    $post = Post::factory()->create([
+    $post = Post::factory()->withThread()->create([
         'body' => 'This body should be updated.',
     ]);
 
@@ -33,7 +35,7 @@ it('can update a post', function () {
 });
 
 it('redirects to the thread show page', function () {
-    $post = Post::factory()->create();
+    $post = Post::factory()->withThread()->create();
 
     actingAs($post->user)
         ->put(route('posts.update', $post), $this->validData)
@@ -41,7 +43,7 @@ it('redirects to the thread show page', function () {
 });
 
 it('redirects to the correct page of posts', function () {
-    $post = Post::factory()->create();
+    $post = Post::factory()->withThread()->create();
 
     actingAs($post->user)
         ->put(route('posts.update', ['post' => $post, 'page' => 2]), $this->validData)
@@ -49,7 +51,7 @@ it('redirects to the correct page of posts', function () {
 });
 
 it('cannot update a post from another user', function () {
-    $post = Post::factory()->create();
+    $post = Post::factory()->withThread()->create();
 
     actingAs(User::factory()->create())
         ->put(route('posts.update', $post), $this->validData)
@@ -59,7 +61,7 @@ it('cannot update a post from another user', function () {
 it('requires data', function (string $attributeToRemove) {
     unset($this->validData[$attributeToRemove]);
 
-    $post = Post::factory()->create();
+    $post = Post::factory()->withThread()->create();
 
     actingAs($post->user)
         ->put(route('posts.update', $post), $this->validData)
@@ -69,7 +71,7 @@ it('requires data', function (string $attributeToRemove) {
 ]);
 
 it('requires valid data', function (array $badData, array|string $errors) {
-    $post = Post::factory()->create();
+    $post = Post::factory()->withThread()->create();
 
     actingAs($post->user)
         ->put(route('posts.update', $post), [...$this->validData, ...$badData])

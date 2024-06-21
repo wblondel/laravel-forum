@@ -2,14 +2,16 @@
   <AppLayout :title="thread.data.title">
     <Container>
       <h1 class="text-2xl font-bold">{{ thread.data.title }}</h1>
-      <span v-if="thread.data.first_post" class="block mt-1 text-sm text-gray-600">Published {{ formattedDate }} by {{ thread.data.first_post.user.name }}</span>
+      <span class="block mt-1 text-sm text-gray-600">Published {{ formattedDate }} by {{ thread.data.user.name }}</span>
 
-      <article class="mt-6">
-        <pre class="whitespace-pre-wrap">{{ thread.data.first_post?.body }}</pre>
-      </article>
+      <div class="mt-6">
+        <ul class="divide-y mt-4">
+          <li v-for="post in posts.data" :key="post.id" class="px-2 py-4">
+            <Post @edit="editPost" @delete="deletePost" :post="post" :postIdBeingEdited="postIdBeingEdited"></Post>
+          </li>
+        </ul>
 
-      <div class="mt-12">
-        <h2 class="text-xl font-semibold">Posts</h2>
+        <Pagination :meta="posts.meta" :only="['posts','jetstream']"/>
 
         <form v-if="$page.props.auth.user" @submit.prevent="() => postIdBeingEdited ? updatePost() : addPost()" class="mt-4">
           <div>
@@ -21,14 +23,6 @@
           <PrimaryButton type="submit" class="mt-3" :disabled="postForm.processing" v-text="postIdBeingEdited ? 'Update Post' : 'Add Post'"></PrimaryButton>
           <SecondaryButton v-if="postIdBeingEdited" @click="cancelEditPost" class="ml-2">Cancel</SecondaryButton>
         </form>
-
-        <ul class="divide-y mt-4">
-          <li v-for="post in posts.data" :key="post.id" class="px-2 py-4">
-            <Post @edit="editPost" @delete="deletePost" :post="post" :postIdBeingEdited="postIdBeingEdited"></Post>
-          </li>
-        </ul>
-
-        <Pagination :meta="posts.meta" :only="['posts','jetstream']"/>
       </div>
     </Container>
 
@@ -52,7 +46,7 @@ import {useConfirm} from "@/Utilities/Composables/useConfirm.js";
 
 const props = defineProps(['thread', 'posts']);
 
-const formattedDate = computed(() => relativeDate(props.thread.data.first_post.created_at));
+const formattedDate = computed(() => relativeDate(props.thread.data.created_at));
 
 const postForm = useForm({
   body: '',

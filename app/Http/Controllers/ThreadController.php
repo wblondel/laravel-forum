@@ -8,6 +8,7 @@ use App\Http\Resources\PostResource;
 use App\Http\Resources\ThreadResource;
 use App\Models\Post;
 use App\Models\Thread;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -16,31 +17,35 @@ use Illuminate\Support\Str;
 use Inertia\Response;
 use Inertia\ResponseFactory;
 
-/*
- * TODO: I know that the first post appears twice. I will modify the relations between Thread and Post later.
- *  My goal is to make a clone of phpBB, because nostalgia :-), but for now I'm following a Laracasts course.
- */
 class ThreadController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index(): Response|ResponseFactory
+    public function index(): Response|ResponseFactory|RedirectResponse
     {
         Gate::authorize('viewAny', Thread::class);
 
+        // TODO: Make sure it is an INT by using https://github.com/ash-jc-allen/laravel-config-validator
+        /** @var int $perPage */
+        $perPage = config('pagination.threads_per_page');
+
         $threads = ThreadResource::collection(Thread::query()
-            //->whereHas('posts', function ($query) {
-            //    $query->where('created_at', '>=', now()->subDay());
-            //})
+            ->whereHas('posts')
             ->with([
-                'firstPost.user:id,name,profile_photo_path',
+                'user:id,name,profile_photo_path',
                 'latestPost.user:id,name,profile_photo_path',
             ])
             ->orderByLatestPost()
             ->withCount('posts')
-            ->paginate()
+            ->paginate($perPage)
         );
+
+        /* @phpstan-ignore-next-line */
+        if ($threads->resource->currentPage() > $threads->resource->lastPage()) {
+            /* @phpstan-ignore-next-line */
+            return redirect($threads->resource->url($threads->resource->lastPage()), 302);
+        }
 
         return inertia('Threads/Index', [
             'threads' => $threads,
@@ -60,7 +65,7 @@ class ThreadController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreThreadRequest $request): \Illuminate\Http\RedirectResponse
+    public function store(StoreThreadRequest $request): RedirectResponse
     {
         Gate::authorize('create', Thread::class);
 
@@ -68,12 +73,21 @@ class ThreadController extends Controller
         $postData = $request->safe()->only(['body']);
 
         $thread = DB::transaction(function () use ($threadData, $postData, $request) {
-            $thread = Thread::create($threadData);
+            // We first create the thread
+            /** @var User $user */ // we know it's a User because the route is for authenticated users only
+            $user = $request->user();
 
-            (new Post($postData))
-                ->user()->associate($request->user())
-                ->thread()->associate($thread)
-                ->save();
+            $thread = Thread::create(array_merge($threadData, ['user_id' => $user->id]));
+
+            // Then the post
+            $post = Post::create($postData);
+            $post->user()->associate($request->user());
+            $post->thread()->associate($thread);
+            $post->save();
+
+            // Finally we correctly set the firstPost of the thread
+            $thread->firstPost()->associate($post);
+            $thread->save();
 
             return $thread;
         });
@@ -92,16 +106,28 @@ class ThreadController extends Controller
             return redirect($thread->showRoute((array) $request->query()), 301);
         }
 
+        // TODO: Make sure it is an INT by using https://github.com/ash-jc-allen/laravel-config-validator
+        /** @var int $perPage */
+        $perPage = config('pagination.posts_per_page_on_thread');
+
+        $posts = PostResource::collection(
+            $thread
+                ->posts()
+                ->with('user')
+                ->oldest()
+                ->oldest('id')
+                ->paginate($perPage)
+        );
+
+        /* @phpstan-ignore-next-line */
+        if ($posts->resource->currentPage() > $posts->resource->lastPage()) {
+            /* @phpstan-ignore-next-line */
+            return redirect($posts->resource->url($posts->resource->lastPage()), 302);
+        }
+
         return inertia('Threads/Show', [
-            'thread' => fn () => ThreadResource::make($thread->load('firstPost.user')),
-            'posts' => fn () => PostResource::collection(
-                $thread
-                    ->posts()
-                    ->with('user')
-                    ->oldest()
-                    ->oldest('id')
-                    ->paginate()
-            ),
+            'thread' => fn () => ThreadResource::make($thread->load('user')),
+            'posts' => $posts,
         ]);
     }
 

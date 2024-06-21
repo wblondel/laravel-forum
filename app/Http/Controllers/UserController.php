@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\UserResource;
 use App\Models\User;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Response;
 use Inertia\ResponseFactory;
@@ -13,17 +14,18 @@ class UserController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(): Response|ResponseFactory
+    public function index(): Response|ResponseFactory|RedirectResponse
     {
         $users = UserResource::collection(User::query()
-            ->with(['createdThreads'])
+            ->with(['threads'])
             ->latest()
             ->paginate()
         );
 
         /* @phpstan-ignore-next-line */
         if ($users->resource->currentPage() > $users->resource->lastPage()) {
-            abort(404);
+            /* @phpstan-ignore-next-line */
+            return redirect($users->resource->url($users->resource->lastPage()), 302);
         }
 
         return inertia('Users/Index', [

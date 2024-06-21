@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Post;
 use App\Models\Thread;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -23,9 +24,6 @@ class PostFactory extends Factory
         $updatedAt = fake()->dateTimeBetween($createdAt, 'now');
 
         return [
-            'user_id' => User::factory(),
-            'thread_id' => Thread::factory(),
-            'parent_id' => null,
             'body' => Collection::times(4, fn () => fake()->realTextBetween(100, 600))->join(PHP_EOL . PHP_EOL),
             'created_at' => $createdAt,
             'updated_at' => $updatedAt,
@@ -33,4 +31,36 @@ class PostFactory extends Factory
     }
 
     // TODO: a post can be edited, and all versions will be kept.
+
+    /**
+     * Indicate that a thread should be created with the post
+     */
+    public function withThread(): Factory
+    {
+        return $this->state(function (array $attributes) {
+            $user = User::factory()->create();
+
+            return [
+                'user_id' => $user->id,
+                'thread_id' => Thread::factory()->create([
+                    'user_id' => $user->id,
+                    'created_at' => $attributes['created_at'],
+                    'updated_at' => $attributes['updated_at'],
+                ]),
+            ];
+        })->afterCreating(function (Post $post) {
+            $post->thread->first_post_id = $post->id;
+            $post->save();
+        });
+    }
+
+    public function recentlyPosted(): Factory
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
+        });
+    }
 }

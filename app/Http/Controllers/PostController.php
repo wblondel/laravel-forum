@@ -24,7 +24,16 @@ class PostController extends Controller
             ->thread()->associate($thread)
             ->save();
 
-        return redirect($thread->showRoute())
+        // TODO: Make sure it is an INT by using https://github.com/ash-jc-allen/laravel-config-validator
+        /** @var int $perPage */
+        $perPage = config('pagination.posts_per_page_on_thread');
+
+        return redirect($thread->showRoute([
+            'page' => $thread
+                ->posts()
+                ->paginate($perPage)
+                ->lastPage(),
+        ]))
             ->banner('Post successfully published.');
     }
 
@@ -56,13 +65,17 @@ class PostController extends Controller
     {
         Gate::authorize('delete', $post);
 
-        $post->delete();
-
         $thread = $post->thread;
 
         if (is_null($thread)) {
             abort(404);
         }
+
+        if ($post->is($thread->firstPost)) {
+            return redirect()->back()->dangerBanner('It is currently not possible to delete the first post of a thread.');
+        }
+
+        $post->delete();
 
         return redirect($thread->showRoute(['page' => $request->query('page')]))
             ->banner('Post successfully deleted.');

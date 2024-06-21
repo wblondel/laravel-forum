@@ -11,12 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('posts', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('user_id')->index()->nullable()->constrained();
-            $table->foreignId('thread_id')->index()->nullable()->constrained();
-            $table->longText('body');
-            $table->timestamps();
+        Schema::table('threads', static function (Blueprint $table) {
+            $table->foreignId('first_post_id')->index()->nullable()->constrained('posts');
         });
     }
 
@@ -25,6 +21,9 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('posts');
+        Schema::table('threads', static function (Blueprint $table) {
+            $table->dropConstrainedForeignId('first_post_id');
+        });
+
     }
 };
