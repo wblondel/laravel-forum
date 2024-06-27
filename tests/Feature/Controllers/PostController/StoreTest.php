@@ -52,7 +52,7 @@ it('redirects to the last page of the thread', function () {
             'page' => $post->thread
                 ->refresh()
                 ->posts()
-                ->paginate(config('pagination.posts_per_page_on_thread'))
+                ->paginate(config()->integer('pagination.posts_per_page_on_thread'))
                 ->lastPage(),
         ]));
 });

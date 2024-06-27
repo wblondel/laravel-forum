@@ -26,7 +26,7 @@ it('passes threads to the view', function () {
             return $thread->latestPost->created_at;
         })
         ->loadCount('posts')
-        ->take(config('pagination.threads_per_page'))
+        ->take(config()->integer('pagination.threads_per_page'))
     );
 
     get(route('threads.index'))

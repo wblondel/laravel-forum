@@ -24,14 +24,10 @@ class PostController extends Controller
             ->thread()->associate($thread)
             ->save();
 
-        // TODO: Make sure it is an INT by using https://github.com/ash-jc-allen/laravel-config-validator
-        /** @var int $perPage */
-        $perPage = config('pagination.posts_per_page_on_thread');
-
         return redirect($thread->showRoute([
             'page' => $thread
                 ->posts()
-                ->paginate($perPage)
+                ->paginate(config()->integer('pagination.posts_per_page_on_thread'))
                 ->lastPage(),
         ]))
             ->banner('Post successfully published.');

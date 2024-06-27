@@ -42,7 +42,7 @@ it('passes posts to the view', function () {
             'posts',
             PostResource::collection($thread->posts
                 ->sortBy('created_at')
-                ->take(config('pagination.posts_per_page_on_thread'))
+                ->take(config()->integer('pagination.posts_per_page_on_thread'))
             )
         );
 });

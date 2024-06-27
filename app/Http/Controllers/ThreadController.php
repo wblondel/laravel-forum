@@ -26,10 +26,6 @@ class ThreadController extends Controller
     {
         Gate::authorize('viewAny', Thread::class);
 
-        // TODO: Make sure it is an INT by using https://github.com/ash-jc-allen/laravel-config-validator
-        /** @var int $perPage */
-        $perPage = config('pagination.threads_per_page');
-
         $threads = ThreadResource::collection(Thread::query()
             ->whereHas('posts')
             ->with([
@@ -38,7 +34,7 @@ class ThreadController extends Controller
             ])
             ->orderByLatestPost()
             ->withCount('posts')
-            ->paginate($perPage)
+            ->paginate(config()->integer('pagination.threads_per_page'))
         );
 
         /* @phpstan-ignore-next-line */
@@ -106,17 +102,13 @@ class ThreadController extends Controller
             return redirect($thread->showRoute((array) $request->query()), 301);
         }
 
-        // TODO: Make sure it is an INT by using https://github.com/ash-jc-allen/laravel-config-validator
-        /** @var int $perPage */
-        $perPage = config('pagination.posts_per_page_on_thread');
-
         $posts = PostResource::collection(
             $thread
                 ->posts()
                 ->with('user')
                 ->oldest()
                 ->oldest('id')
-                ->paginate($perPage)
+                ->paginate(config()->integer('pagination.posts_per_page_on_thread'))
         );
 
         /* @phpstan-ignore-next-line */
